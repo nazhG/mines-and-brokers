@@ -1,4 +1,8 @@
-# Start point for a _hardhat_ app
+# ERC20 emissions
+
+This is the draft, it is an initial phase of the contract that allows users to invest funds, to later obtain a reward exchangeable for NFTs.
+
+[**Planing**](https://docs.google.com/document/d/1u8cs_PrxGBKHLk9jD1hM3G9rWKKh6PRRvu39L9QyFG8/edit?ts=60e5a921#heading=h.s2ybe8291aua)  
 
 ### Pre-requisites 📋
 
@@ -16,7 +20,7 @@ npm i
 npm run compile
 ```
 
-## Running tests ⚙️
+## Running tests ⚙️ _in progress_
 
 _In order to test using a mainnet fork you must set:_
 
@@ -33,10 +37,6 @@ npm run test
 
 - [Solidity](https://docs.soliditylang.org/en/v0.6.6/)
 - [Hardhat](https://hardhat.org/) 👷
-
-## Author
-
-**Nazhir Gonzalez** - [nazhG](https://github.com/nazhG)
 
 ## License 📄
 
