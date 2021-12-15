@@ -10,9 +10,23 @@ require("hardhat-gas-reporter");
 module.exports = {
   networks: {
     hardhat: {
-      forking: {
-        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
-        blockNumber: 12404000
+      hardhat: {
+        forking: {
+          url: "https://bsc-dataseed.binance.org/",
+          blockNumber: 13487764,
+        },
+      },
+      binance_mainnet: {
+        url: "https://bsc-dataseed.binance.org/",
+        chainId: 56,
+        gasPrice: 20000000000,
+        accounts: {mnemonic: process.env.MNEMONIC}
+      },
+      binance_testnet: {
+        url: "https://data-seed-prebsc-1-s1.binance.org:8545",
+        chainId: 97,
+        gasPrice: 20000000000,
+        accounts: {mnemonic: process.env.MNEMONIC}
       }
     },
   },
