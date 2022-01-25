@@ -15,20 +15,26 @@ module.exports = {
           url: "https://bsc-dataseed.binance.org/",
           blockNumber: 13487764,
         },
-      },
-      binance_mainnet: {
-        url: "https://bsc-dataseed.binance.org/",
-        chainId: 56,
-        gasPrice: 20000000000,
-        accounts: {mnemonic: process.env.MNEMONIC}
-      },
-      binance_testnet: {
-        url: "https://data-seed-prebsc-1-s1.binance.org:8545",
-        chainId: 97,
-        gasPrice: 20000000000,
-        accounts: {mnemonic: process.env.MNEMONIC}
       }
     },
+    binance_mainnet: {
+      url: "https://bsc-dataseed.binance.org/",
+      chainId: 56,
+      gasPrice: 20000000000,
+      accounts: {mnemonic: process.env.MNEMONIC}
+    },
+    binance_testnet: {
+      url: "https://data-seed-prebsc-1-s1.binance.org:8545",
+      chainId: 97,
+      gasPrice: 20000000000,
+      accounts: {mnemonic: process.env.MNEMONIC}
+    },
+    rinkeby: {
+      url: "https://rinkeby.infura.io/v3/13322d87cfd54c9a880aad0ff59a507c",
+      chainID: 4,
+      gasPrice: 20000000000,
+      accounts: {mnemonic: process.env.MNEMONIC}
+    }
   },
   gasReporter: {
     enabled: true,
