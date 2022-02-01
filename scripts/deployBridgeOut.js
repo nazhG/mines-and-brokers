@@ -1,12 +1,13 @@
 const { ethers } = require("hardhat");
 
 async function main() {
-    //npx hardhat run --network rinkeby scripts/deployBridge.js
-    const Bridge = await ethers.getContractFactory("Bridge");
+    //npx hardhat run --network binance_testnet scripts/deployBridgeOut.js
+    const Bridge = await ethers.getContractFactory("BridgeOut");
     
 		bridge = await Bridge.deploy(
       "0x5044531067a7605E68CE01b436837414e5623eEe", 
-      "0x78Eb54810EB97e38A716c069021Df90be6aC68C5"
+      "0xd312f18554Ff14e14f40F7705aa3751d7336FC38",
+      1000000000
     );
 
     console.log("bridge deployed to:", bridge.address);
@@ -19,4 +20,4 @@ async function main() {
       process.exit(1);
     });
     
-// bridge deployed to: 0xB9DF37d2Aa3a706C1087Ec52a6c88a0501934e11
+// bridge deployed to: 0xe61C78556Eb753DF4723dd2e5c7538ad97cfcFeE
