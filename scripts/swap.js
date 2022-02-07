@@ -32,8 +32,6 @@ const init3 = async () => {
   console.log('quemando el token en el bridge');
   await BridgeIn.methods.burn(address, web3.utils.toWei('1', 'ether')).send({ from: address });
 
-  
-
   const providerBSC = new Provider(privateKey, 'https://data-seed-prebsc-1-s1.binance.org:8545/'); 
   const web3BSC = new Web3(providerBSC);
   const BHM = new web3BSC.eth.Contract(
