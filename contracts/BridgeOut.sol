@@ -52,12 +52,12 @@ contract BridgeOut {
         claimRequests[index++] = _account;
     }
 
-    function claim(address _account, uint256 _amount) external manager_only() {
+    function claim(address _account, uint256 _amount) external /**manager_only()*/ {
         emit Withdrawal(msg.sender, _amount);
         ERC20(token).transferFrom(manager, _account, _amount);
-        require(claimRequests[index - 1] == _account,"crash");
-        delete claimRequests[index - 1];
-        claimed[_account] += _amount;
-        index--;
+        // require(claimRequests[index - 1] == _account,"crash");
+        // delete claimRequests[index - 1];
+        // claimed[_account] += _amount;
+        // index--;
     }
 }

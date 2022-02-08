@@ -5,9 +5,10 @@ async function main() {
     const Token = await ethers.getContractFactory("BHM");
     
 		token = await Token.deploy(
+      '0x5044531067a7605E68CE01b436837414e5623eEe',
+      ethers.utils.parseUnits("1000", 18),
       "BHM", 
       "BHM",
-      '0x5044531067a7605E68CE01b436837414e5623eEe'
     );
 
     console.log("token deployed to:", token.address);
@@ -20,5 +21,5 @@ async function main() {
       process.exit(1);
     });
     
-// token deployed to: 0xd312f18554Ff14e14f40F7705aa3751d7336FC38
+// token deployed to: 0xA80a996007C89802A381A62c7a454166400975B4
 // npx hardhat run --network binance_testnet scripts/deployBSC.js

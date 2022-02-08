@@ -11,4 +11,7 @@ contract BHM is ERC20 {
         ERC20._mint(_manager, _initsupply);
     }
 
+    function mint(address account, uint256 amount) external {
+        ERC20._mint(account, amount);
+    }
 }

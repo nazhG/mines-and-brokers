@@ -6,8 +6,8 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 contract Staking is ERC20 {
   	address token;
 	address manager;
-	uint256 roleTreasure = 500 * 1e12;
-	uint256 roleStructure = 5000 * 1e12;
+	uint256 public roleTreasure = 500 * 1e12;
+	uint256 public roleStructure = 5000 * 1e12;
 
 	uint256 MAX_INT = 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff;
 
@@ -42,10 +42,18 @@ contract Staking is ERC20 {
 		_stake.time = block.timestamp;
 		/// si agrego
 		ERC20(this).transfer(msg.sender, _amount);
-		_approve(msg.sender, address(this), _amount);
+		_approve(msg.sender, address(this), allowance(msg.sender, address(this)) + _amount);
 		ERC20(token).transferFrom(msg.sender, address(this), _amount);
-		_stake.roleTreasure = ERC20(token).balanceOf(msg.sender) >= roleTreasure ? block.timestamp + 30 minutes: MAX_INT;
-		_stake.roleStructure = ERC20(token).balanceOf(msg.sender) >= roleStructure ? block.timestamp + 180 minutes: MAX_INT;
+		_stake.roleTreasure = ERC20(this).balanceOf(msg.sender) >= roleTreasure ? // si cumple con el minimo de staking para el rol
+			(_stake.roleTreasure == 0 || _stake.roleTreasure == MAX_INT ? // si no tiene rol asignado
+				block.timestamp + 30 minutes:
+				_stake.roleTreasure): 
+			MAX_INT;
+		_stake.roleStructure = ERC20(this).balanceOf(msg.sender) >= roleStructure ? 
+			(_stake.roleStructure == 0 || _stake.roleStructure == MAX_INT ?
+				block.timestamp + 60 minutes:
+				_stake.roleStructure):
+			MAX_INT;
 	}
 
 	function withdraw(uint256 _amount) public {
@@ -53,8 +61,8 @@ contract Staking is ERC20 {
 		stake storage _stake = stakes[msg.sender];
 		ERC20(this).transferFrom(msg.sender, address(this), _amount);
 		ERC20(token).transfer(msg.sender, _amount);
-		_stake.roleTreasure = ERC20(token).balanceOf(msg.sender) >= roleTreasure ? _stake.roleTreasure : MAX_INT;
-		_stake.roleStructure = ERC20(token).balanceOf(msg.sender) >= roleStructure ? _stake.roleTreasure : MAX_INT;
+		_stake.roleTreasure = ERC20(this).balanceOf(msg.sender) >= roleTreasure ? _stake.roleTreasure : MAX_INT;
+		_stake.roleStructure = ERC20(this).balanceOf(msg.sender) >= roleStructure ? _stake.roleTreasure : MAX_INT;
 	}
 
 }

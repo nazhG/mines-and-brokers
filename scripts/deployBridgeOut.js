@@ -20,4 +20,4 @@ async function main() {
       process.exit(1);
     });
     
-// bridge deployed to: 0xe61C78556Eb753DF4723dd2e5c7538ad97cfcFeE
+// bridge deployed to: 0x44fDBC0AA0538F740eDF8244cc429503BEee58d1
