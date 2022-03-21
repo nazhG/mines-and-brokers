@@ -40,9 +40,10 @@ contract Staking is ERC20 {
 	function staking(uint256 _amount) public {
 		stake storage _stake = stakes[msg.sender];
 		_stake.time = block.timestamp;
-		/// si agrego
+		/// fee posiblemnte procentual
 		ERC20(this).transfer(msg.sender, _amount);
 		_approve(msg.sender, address(this), allowance(msg.sender, address(this)) + _amount);
+		console.log('staking');
 		ERC20(token).transferFrom(msg.sender, address(this), _amount);
 		_stake.roleTreasure = ERC20(this).balanceOf(msg.sender) >= roleTreasure ? // si cumple con el minimo de staking para el rol
 			(_stake.roleTreasure == 0 || _stake.roleTreasure == MAX_INT ? // si no tiene rol asignado
