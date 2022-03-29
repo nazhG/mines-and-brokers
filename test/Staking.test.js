@@ -3,6 +3,9 @@ const STAKING = artifacts.require("Staking");
 const BRIDGE = artifacts.require("BridgeOut");
 const { expectEvent, expectRevert, time } = require("@openzeppelin/test-helpers");
 
+const { ethers } = require("hardhat");
+const provider = ethers.provider;
+
 toWei = (num) => web3.utils.toWei(num);
 
 contract("Staking", async ([manager, ID1, ID2, ID3, ID4, ID5]) => {
@@ -24,9 +27,14 @@ contract("Staking", async ([manager, ID1, ID2, ID3, ID4, ID5]) => {
 	it("use bridge", async function () {
 		await Bhm.approve(Bridge.address, toWei("1000000"),{ from: manager });
 
+		const preBlanaceManager = Number(await provider.getBalance(manager));
+		
 		await Bridge.claimRequest(ID1,{ from: ID1, value: toWei('0.001') });
 		await Bridge.claimRequest(ID2,{ from: ID2, value: toWei('0.001') });
 		await Bridge.claimRequest(ID3,{ from: ID3, value: toWei('0.001') });
+		
+		const posBlanaceManager = Number(await provider.getBalance(manager));
+        expect(posBlanaceManager).to.be.greaterThan(preBlanaceManager);
 
 		await Bridge.claim(ID1, toWei('300'),{ from: manager });
         expect(Number(await Bhm.balanceOf(ID1))).to.be.equal(Number(toWei('300')));
