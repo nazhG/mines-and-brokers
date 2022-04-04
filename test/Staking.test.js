@@ -15,13 +15,13 @@ contract("Staking", async ([manager, ID1, ID2, ID3, ID4, ID5]) => {
 	const firstCast = (Date.now() + time.duration.years(2));
 	
 	before(async () => {
-    	Bhm = await BHM.new(manager, toWei('1000'), "BHM", "BHM", ID4, ID5);
+    	Bhm = await BHM.new(manager, toWei('1000'), "BHM", "BHM", 100, ID4, ID5);/** revisar parametros en el contrato */
 
 		Bridge = await BRIDGE.new(manager, Bhm.address, toWei('0.001'));
 
     	StakingContract = await STAKING.new(toWei('1000'), Bhm.address, "LP", "LP");
 		
-		await Bhm.setStakingAddress(StakingContract.address,{ from: manager });
+		await Bhm.setStakingAddress(StakingContract.address, ID4, ID5,{ from: manager });
 	});
 
 	it("use bridge", async function () {
