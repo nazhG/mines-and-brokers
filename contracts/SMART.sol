@@ -1,16 +1,22 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.6;
 
-import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-// Dummy BSC
-contract BHM is ERC20 {
+/// @title ERC20 token with fee per transfers
+contract SMART is ERC20 {
+
+    /// @notice Address allowed to change fees and wallets to receive them.
 	address public manager;
+    /// @notice Contract that makes the staking.
 	address public staking;
+    /// @notice Treasure wallet.
 	address public treasureWallet;
+    /// @notice Structure wallet.
 	address public structureWallet;
-    uint256 public fee; // 100 = 1%, 50 = 0.5%
+    /// @notice Percentage fee that applies with each transaction of the token.
+    /// e.g. 100 = 1%, 50 = 0.5%
+    uint256 public fee; 
 
     constructor(
         address _manager, 
@@ -28,6 +34,7 @@ contract BHM is ERC20 {
 		structureWallet = _structureWallet;
     }
 
+    /// @notice Allow the ´manager´ to change the wallets that receives the fee.
     function setStakingAddress(address _staking, address _treasureWallet, address _structureWallet) external {
         require(msg.sender == manager, 'Manager Only');
         staking = _staking;
@@ -35,15 +42,14 @@ contract BHM is ERC20 {
         structureWallet = _structureWallet;
     }
 
+    /// @notice Allow the ´manager´ to change the ´fee´.
     function setFee(uint256 _fee) external {
         require(msg.sender == manager, 'Manager Only');
         fee = _fee;
     }
 
-    function mint(address account, uint256 amount) external {
-        ERC20._mint(account, amount);
-    }
-
+    /// @notice Transfer applying the fee.
+    /// fee is adicional to the ´amount´ sended.
     function transfer(address recipient, uint256 amount) public override returns (bool) {
         uint256 _fee = (amount * fee) / 10000;
         _transfer(_msgSender(), recipient, amount);
@@ -54,6 +60,8 @@ contract BHM is ERC20 {
         return true;
     }
 
+    /// @notice TransferFrom applying the fee.
+    /// fee is adicional to the ´amount´ sended.
     function transferFrom(
         address sender,
         address recipient,
