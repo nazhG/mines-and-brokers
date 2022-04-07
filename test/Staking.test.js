@@ -13,15 +13,18 @@ contract("Staking", async ([manager, ID1, ID2, ID3, ID4, ID5]) => {
 	let Smart, StakingContract, Brige;
 	
 	const firstCast = (Date.now() + time.duration.years(2));
+
+	const _fee = 1000;
+	const fee = 0.1;
 	
 	before(async () => {
-    	Smart = await SMART.new(manager, toWei('1000'), "SMART", "SMT", 100, ID4, ID5);/** revisar parametros en el contrato */
+    	Smart = await SMART.new(manager, toWei('1000'), "SMART", "SMT", _fee, ID4, ID5);/** revisar parametros en el contrato */
 
 		Bridge = await BRIDGE.new(manager, Smart.address, toWei('0.001'));
 
     	StakingContract = await STAKING.new(toWei('1000'), Smart.address, "LP", "LP");
 		
-		await Smart.setWallets(ID4, ID5,{ from: manager });
+		await Smart.setStakingAddress(StakingContract.address, ID4, ID5,{ from: manager });
 	});
 
 	it("use bridge", async function () {
@@ -37,16 +40,17 @@ contract("Staking", async ([manager, ID1, ID2, ID3, ID4, ID5]) => {
         expect(posBlanaceManager).to.be.greaterThan(preBlanaceManager);
 
 		await Bridge.claim(ID1, toWei('300'),{ from: manager });
-        expect(Number(await Smart.balanceOf(ID1))).to.be.equal(Number(toWei('300')));
+        expect(Number(await Smart.balanceOf(ID1))).to.be.equal(Number(toWei((300).toString())));
 		await Bridge.claim(ID2, toWei('200'),{ from: manager });
-        expect(Number(await Smart.balanceOf(ID2))).to.be.equal(Number(toWei('200')));
+        expect(Number(await Smart.balanceOf(ID2))).to.be.equal(Number(toWei((200).toString())));
 		await Bridge.claim(ID3, toWei('200'),{ from: manager });
-        expect(Number(await Smart.balanceOf(ID3))).to.be.equal(Number(toWei('200')));
+        expect(Number(await Smart.balanceOf(ID3))).to.be.equal(Number(toWei((200).toString())));
 	});
 
 	it("Make a transfer", async function () {
+		
 		await Smart.transfer(ID2, toWei("10"),{ from: ID3 });
-		// expect(Number(await Bhm.balanceOf(ID3))).to.be.equal(Number(toWei('190')));
+		expect(Number(await Smart.balanceOf(ID3))).to.be.equal(Number(toWei((190-2).toString())));
 	});
 
 	it("Make a stake", async function () {
@@ -56,9 +60,9 @@ contract("Staking", async ([manager, ID1, ID2, ID3, ID4, ID5]) => {
 		await StakingContract.staking(toWei('0.1'),{ from: ID1 });
 		await StakingContract.staking(toWei('0.1'),{ from: ID1 });
 		
-        expect(Number(await Smart.balanceOf(ID1))).to.be.equal(Number(toWei('299.8')));
+        expect(Number(await Smart.balanceOf(ID1))).to.be.equal(Number(toWei('299.76')));
 		await StakingContract.withdraw(toWei('0.2'),{ from: ID1 });
-        expect(Number(await Smart.balanceOf(ID1))).to.be.equal(Number(toWei('300')));
+        expect(Number(await Smart.balanceOf(ID1))).to.be.equal(Number(toWei('299.96')));
 		
 	});
 

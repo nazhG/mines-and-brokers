@@ -15,7 +15,7 @@ contract SMART is ERC20 {
     /// @notice Structure wallet.
 	address public structureWallet;
     /// @notice Percentage fee that applies with each transaction of the token.
-    /// e.g. 100 = 1%, 50 = 0.5%
+    /// e.g. 1000 = 1%, 500 = 0.5%
     uint256 public fee; 
 
     constructor(
@@ -69,11 +69,8 @@ contract SMART is ERC20 {
     ) public virtual override returns (bool) {
         uint256 _fee = (amount * fee) / 10000;
         _transfer(sender, recipient, amount);
-        
-        if (!(sender == manager || sender == staking || recipient == staking)) {
-            _transfer(sender, treasureWallet, _fee);
-            _transfer(sender, structureWallet, _fee);
-        }
+        _transfer(sender, treasureWallet, _fee);
+        _transfer(sender, structureWallet, _fee);
 
         uint256 currentAllowance = allowance(sender, _msgSender());
         require(currentAllowance >= amount, "ERC20: transfer amount exceeds allowance");
