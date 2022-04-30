@@ -5,7 +5,9 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract BridgeOut {
 
-    mapping(address => bool) public claimable;
+    uint256 public i = 0;
+    mapping(uint256 => address) public accounts;
+    mapping(address => uint256) public balance;
     uint256 public fee;
     address public token;
     address public manager;
@@ -24,6 +26,10 @@ contract BridgeOut {
         fee = _fee;
     }
 
+    function getAccountsCount() external view returns(uint256) {
+        return i;
+    }
+
     function changeManager(address _manager) external manager_only() {
         require(_manager != address(0), "ADDRESS 0");
         manager = _manager;
@@ -36,13 +42,14 @@ contract BridgeOut {
     function claimRequest(address _account) external payable {
         require(msg.value >= fee, "value is less than fee");
         payable(manager).transfer(msg.value);
-        claimable[_account] = true;
+        accounts[i++] = _account;
     }
 
     function claim(address _account, uint256 _amount) external manager_only() {
         emit Withdrawal(msg.sender, _amount);
         ERC20(token).transferFrom(manager, _account, _amount);
-        require(claimable[_account],"need claim request to pay fee");
-        claimable[_account] = false;
+        require(accounts[i]==_account,"need claim request to pay fee");
+        balance[_account] += _amount;
+        delete(accounts[i--]);
     }
 }
