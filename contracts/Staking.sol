@@ -7,22 +7,36 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 contract Staking is ERC20 {
 
     /// @notice Contract of the token to stake.
-  	address token;
-    /// @notice Time to research treasure rol.
+  	address public token;
+    /// @notice Time to research Treasure rol.
 	uint256 public roleTreasure = 500 * 1e12;
-    /// @notice Time to research structure rol.
+    /// @notice Time to research Structure rol.
 	uint256 public roleStructure = 5000 * 1e12;
+    /// @notice Time to research Treasure Author rol.
+	uint256 public roleTreasureAuthor = 50000 * 1e12;
+    /// @notice Time to research Structure Author rol.
+	uint256 public roleStructureAuthor = 5000000 * 1e12;
+    /// @notice Time to research Treasure rol.
+	uint256 public roleTreasureTime = 30 minutes;
+    /// @notice Time to research Structure rol.
+	uint256 public roleStructureTime = 30 minutes;
+    /// @notice Time to research Treasure Author rol.
+	uint256 public roleTreasureAuthorTime = 30 minutes;
+    /// @notice Time to research Structure Author rol.
+	uint256 public roleStructureAuthorTime = 30 minutes;
 
     /// @dev if the rol can't be reached return this constant.
 	uint256 internal constant MAX_INT = 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff;
 
-    /// @notice investment made by the user.
+    /// investment made by the user.
 	/// handled time as timestamp,
 	/// ´time´ when the stake was made.
 	/// ´roleTreasure´ when the Treasure role would be reached.
 	/// ´roleStructure´ when the Structure role would be reached.
 	struct stake {
 		uint256 time; 
+		uint256 roleStructureAuthor; 
+		uint256 roleTreasureAuthor; 
 		uint256 roleTreasure; 
 		uint256 roleStructure;
 	}
@@ -46,7 +60,11 @@ contract Staking is ERC20 {
 	/// 1 if has treasure role,
 	/// 0 otherwise.
 	function getRole(address _account) public view returns(uint256) {
-		if (block.timestamp >= stakes[_account].roleStructure && stakes[_account].roleStructure != 0 && stakes[_account].roleStructure != MAX_INT) {
+		if (block.timestamp >= stakes[_account].roleStructureAuthor && stakes[_account].roleStructureAuthor != 0 && stakes[_account].roleStructureAuthor != MAX_INT) {
+			return 4;
+		} else if (block.timestamp >= stakes[_account].roleTreasureAuthor && stakes[_account].roleTreasureAuthor != 0 && stakes[_account].roleTreasureAuthor != MAX_INT) {
+			return 3;
+		} else if (block.timestamp >= stakes[_account].roleStructure && stakes[_account].roleStructure != 0 && stakes[_account].roleStructure != MAX_INT) {
 			return 2;
 		} else if (block.timestamp >= stakes[_account].roleTreasure && stakes[_account].roleTreasure != 0 && stakes[_account].roleTreasure != MAX_INT) {
 			return 1;
@@ -65,8 +83,18 @@ contract Staking is ERC20 {
 		ERC20(this).transfer(msg.sender, _amount);
 		_approve(msg.sender, address(this), allowance(msg.sender, address(this)) + _amount);
 		ERC20(token).transferFrom(msg.sender, address(this), _amount);
-		_stake.roleTreasure = ERC20(this).balanceOf(msg.sender) >= roleTreasure ? // si cumple con el minimo de staking para el rol
-			(_stake.roleTreasure == 0 || _stake.roleTreasure == MAX_INT ? // si no tiene rol asignado
+		_stake.roleTreasureAuthor = ERC20(this).balanceOf(msg.sender) >= roleTreasureAuthor ? // si cumple con el minimo de staking para el rol
+			(_stake.roleTreasureAuthor == 0 || _stake.roleTreasureAuthor == MAX_INT ? // si no tiene rol asignado
+				block.timestamp + 30 minutes:
+				_stake.roleTreasureAuthor): 
+			MAX_INT;
+		_stake.roleStructureAuthor = ERC20(this).balanceOf(msg.sender) >= roleStructureAuthor ? 
+			(_stake.roleStructureAuthor == 0 || _stake.roleStructureAuthor == MAX_INT ?
+				block.timestamp + 30 minutes:
+				_stake.roleStructureAuthor): 
+			MAX_INT;
+		_stake.roleTreasure = ERC20(this).balanceOf(msg.sender) >= roleTreasure ?
+			(_stake.roleTreasure == 0 || _stake.roleTreasure == MAX_INT ?
 				block.timestamp + 30 minutes:
 				_stake.roleTreasure): 
 			MAX_INT;

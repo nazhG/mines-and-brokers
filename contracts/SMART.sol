@@ -67,6 +67,7 @@ contract SMART is ERC20 {
         address recipient,
         uint256 amount
     ) public virtual override returns (bool) {
+        // e.g. 50 = 0.005%
         uint256 _fee = (amount * fee) / 10000;
         _transfer(sender, recipient, amount);
         _transfer(sender, treasureWallet, _fee);
