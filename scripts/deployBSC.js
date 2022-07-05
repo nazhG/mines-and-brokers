@@ -33,5 +33,6 @@ async function main() {
       process.exit(1);
     });
     
-// token deployed to: 0xA80a996007C89802A381A62c7a454166400975B4
+// bridge deployed to: 0x089f868E362419d09FB42e66C20c0327ea7e63bE
+// token deployed to: 0x24112b91DC7d3AE9D456870b298F6FC240F3acD5
 // npx hardhat run --network binance_testnet scripts/deployBSC.js

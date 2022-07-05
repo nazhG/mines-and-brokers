@@ -8,22 +8,15 @@ contract Staking is ERC20 {
 
     /// @notice Contract of the token to stake.
   	address public token;
-    /// @notice Time to research Treasure rol.
-	uint256 public roleTreasure = 500 * 1e12;
-    /// @notice Time to research Structure rol.
-	uint256 public roleStructure = 5000 * 1e12;
-    /// @notice Time to research Treasure Author rol.
-	uint256 public roleTreasureAuthor = 50000 * 1e12;
-    /// @notice Time to research Structure Author rol.
-	uint256 public roleStructureAuthor = 5000000 * 1e12;
-    /// @notice Time to research Treasure rol.
-	uint256 public roleTreasureTime = 30 minutes;
-    /// @notice Time to research Structure rol.
-	uint256 public roleStructureTime = 30 minutes;
-    /// @notice Time to research Treasure Author rol.
-	uint256 public roleTreasureAuthorTime = 30 minutes;
-    /// @notice Time to research Structure Author rol.
-	uint256 public roleStructureAuthorTime = 30 minutes;
+
+	/// @notice how much and how long does it take to achieve the role.
+	struct role {
+		uint256 time; 
+		uint256 amount;
+	}
+
+	/// @notice only 4 roles.
+	role[4] public roles;
 
     /// @dev if the rol can't be reached return this constant.
 	uint256 internal constant MAX_INT = 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff;
@@ -35,18 +28,30 @@ contract Staking is ERC20 {
 	/// ´roleStructure´ when the Structure role would be reached.
 	struct stake {
 		uint256 time; 
-		uint256 roleStructureAuthor; 
-		uint256 roleTreasureAuthor; 
-		uint256 roleTreasure; 
-		uint256 roleStructure;
+		uint256[4] role;
 	}
 
     /// @notice All stakes made.
 	mapping (address => stake) public stakes;
 
-	constructor (uint256 _supply, address _token, string memory name_, string memory symbol_) ERC20(name_, symbol_) {
+	constructor (
+		uint256 _supply, 
+		address _token, 
+		string memory name_, 
+		string memory symbol_, 
+		role memory _roles1,
+		role memory _roles2,
+		role memory _roles3,
+		role memory _roles4
+	) ERC20(name_, symbol_) {
 		_mint(address(this), _supply);
 		token = _token;
+
+		// role initialitation
+		roles[0] = _roles1;
+		roles[1] = _roles2;
+		roles[2] = _roles3;
+		roles[3] = _roles4;
 	}
 
     /// @notice Show the stake made by an ´_account´.
@@ -60,13 +65,13 @@ contract Staking is ERC20 {
 	/// 1 if has treasure role,
 	/// 0 otherwise.
 	function getRole(address _account) public view returns(uint256) {
-		if (block.timestamp >= stakes[_account].roleStructureAuthor && stakes[_account].roleStructureAuthor != 0 && stakes[_account].roleStructureAuthor != MAX_INT) {
+		if (block.timestamp >= stakes[_account].role[3] && stakes[_account].role[3] != 0 && stakes[_account].role[3] != MAX_INT) {
 			return 4;
-		} else if (block.timestamp >= stakes[_account].roleTreasureAuthor && stakes[_account].roleTreasureAuthor != 0 && stakes[_account].roleTreasureAuthor != MAX_INT) {
+		} else if (block.timestamp >= stakes[_account].role[2] && stakes[_account].role[2] != 0 && stakes[_account].role[2] != MAX_INT) {
 			return 3;
-		} else if (block.timestamp >= stakes[_account].roleStructure && stakes[_account].roleStructure != 0 && stakes[_account].roleStructure != MAX_INT) {
+		} else if (block.timestamp >= stakes[_account].role[1] && stakes[_account].role[1] != 0 && stakes[_account].role[1] != MAX_INT) {
 			return 2;
-		} else if (block.timestamp >= stakes[_account].roleTreasure && stakes[_account].roleTreasure != 0 && stakes[_account].roleTreasure != MAX_INT) {
+		} else if (block.timestamp >= stakes[_account].role[0] && stakes[_account].role[0] != 0 && stakes[_account].role[0] != MAX_INT) {
 			return 1;
 		} else {
 			return 0;
@@ -83,25 +88,25 @@ contract Staking is ERC20 {
 		ERC20(this).transfer(msg.sender, _amount);
 		_approve(msg.sender, address(this), allowance(msg.sender, address(this)) + _amount);
 		ERC20(token).transferFrom(msg.sender, address(this), _amount);
-		_stake.roleTreasureAuthor = ERC20(this).balanceOf(msg.sender) >= roleTreasureAuthor ? // si cumple con el minimo de staking para el rol
-			(_stake.roleTreasureAuthor == 0 || _stake.roleTreasureAuthor == MAX_INT ? // si no tiene rol asignado
+		_stake.role[0] = ERC20(this).balanceOf(msg.sender) >= roles[0].amount ? // si cumple con el minimo de staking para el rol
+			(_stake.role[0] == 0 || _stake.role[0] == MAX_INT ? // si no tiene rol asignado
 				block.timestamp + 30 minutes:
-				_stake.roleTreasureAuthor): 
+				_stake.role[0]): 
 			MAX_INT;
-		_stake.roleStructureAuthor = ERC20(this).balanceOf(msg.sender) >= roleStructureAuthor ? 
-			(_stake.roleStructureAuthor == 0 || _stake.roleStructureAuthor == MAX_INT ?
+		_stake.role[1] = ERC20(this).balanceOf(msg.sender) >= roles[1].amount ? 
+			(_stake.role[1] == 0 || _stake.role[1] == MAX_INT ?
 				block.timestamp + 30 minutes:
-				_stake.roleStructureAuthor): 
+				_stake.role[1]): 
 			MAX_INT;
-		_stake.roleTreasure = ERC20(this).balanceOf(msg.sender) >= roleTreasure ?
-			(_stake.roleTreasure == 0 || _stake.roleTreasure == MAX_INT ?
+		_stake.role[2] = ERC20(this).balanceOf(msg.sender) >= roles[2].amount ?
+			(_stake.role[2] == 0 || _stake.role[2] == MAX_INT ?
 				block.timestamp + 30 minutes:
-				_stake.roleTreasure): 
+				_stake.role[2]): 
 			MAX_INT;
-		_stake.roleStructure = ERC20(this).balanceOf(msg.sender) >= roleStructure ? 
-			(_stake.roleStructure == 0 || _stake.roleStructure == MAX_INT ?
+		_stake.role[3] = ERC20(this).balanceOf(msg.sender) >= roles[3].amount ? 
+			(_stake.role[3] == 0 || _stake.role[3] == MAX_INT ?
 				block.timestamp + 60 minutes:
-				_stake.roleStructure):
+				_stake.role[3]):
 			MAX_INT;
 	}
 
@@ -111,8 +116,10 @@ contract Staking is ERC20 {
 		stake storage _stake = stakes[msg.sender];
 		ERC20(this).transferFrom(msg.sender, address(this), _amount);
 		ERC20(token).transfer(msg.sender, _amount);
-		_stake.roleTreasure = ERC20(this).balanceOf(msg.sender) >= roleTreasure ? _stake.roleTreasure : MAX_INT;
-		_stake.roleStructure = ERC20(this).balanceOf(msg.sender) >= roleStructure ? _stake.roleTreasure : MAX_INT;
+		_stake.role[0] = ERC20(this).balanceOf(msg.sender) >= roles[0].amount ? _stake.role[0] : MAX_INT;
+		_stake.role[1] = ERC20(this).balanceOf(msg.sender) >= roles[1].amount ? _stake.role[1] : MAX_INT;
+		_stake.role[2] = ERC20(this).balanceOf(msg.sender) >= roles[2].amount ? _stake.role[2] : MAX_INT;
+		_stake.role[3] = ERC20(this).balanceOf(msg.sender) >= roles[3].amount ? _stake.role[3] : MAX_INT;
 	}
 
 }
