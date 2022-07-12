@@ -2,9 +2,10 @@
 pragma solidity ^0.8.6;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 /// @title Staking contract with roles reachable by time and amount.
-contract Staking is ERC20 {
+contract Staking is ERC20, Ownable {
 
     /// @notice Contract of the token to stake.
   	address public token;
@@ -52,6 +53,38 @@ contract Staking is ERC20 {
 		roles[1] = _roles2;
 		roles[2] = _roles3;
 		roles[3] = _roles4;
+	}
+
+	function getRole0(address _account) public view returns (uint256) {
+		return stakes[_account].role[0];
+	}
+
+	function setRole0(address _account, uint256 _role) public onlyOwner {
+		stakes[_account].role[0] = _role;
+	}
+
+	function getRole1(address _account) public view returns (uint256) {
+		return stakes[_account].role[1];
+	}
+
+	function setRole1(address _account, uint256 _role) public onlyOwner {
+		stakes[_account].role[1] = _role;
+	}
+
+	function getRole2(address _account) public view returns (uint256) {
+		return stakes[_account].role[2];
+	}
+
+	function setRole2(address _account, uint256 _role) public onlyOwner {
+		stakes[_account].role[2] = _role;
+	}
+
+	function getRole3(address _account) public view returns (uint256) {
+		return stakes[_account].role[3];
+	}
+
+	function setRole3(address _account, uint256 _role) public onlyOwner {
+		stakes[_account].role[3] = _role;
 	}
 
     /// @notice Show the stake made by an ´_account´.
